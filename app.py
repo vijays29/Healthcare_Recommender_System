@@ -5,11 +5,16 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_extraction.text import CountVectorizer
 
 # Load dataset (you can replace this with your own dataset)
-# Make sure the dataset has columns for 'symptoms', 'diagnosis', and 'treatment'
-df = pd.read_csv('src/Medical_data.scv')  # Replace with your actual file
+df = pd.read_csv('healthcare_dataset.csv')  # Replace with your actual file
+
+# Check if the dataset has 'symptoms', 'diagnosis', and 'treatment' columns
+if not all(col in df.columns for col in ['symptoms', 'diagnosis', 'treatment']):
+    st.error("Dataset should contain 'symptoms', 'diagnosis', and 'treatment' columns.")
+    st.stop()
 
 # Preprocess the dataset
 symptoms = df['symptoms']  # Assuming 'symptoms' column contains symptom information
@@ -23,8 +28,6 @@ diagnosis_encoded = label_encoder.fit_transform(diagnosis)
 X_train, X_test, y_train, y_test = train_test_split(symptoms, diagnosis_encoded, test_size=0.2, random_state=42)
 
 # Convert symptoms (text) into numerical format (vectorize)
-# This can be done using TF-IDF, Bag of Words, or Word Embeddings
-from sklearn.feature_extraction.text import CountVectorizer
 vectorizer = CountVectorizer()
 X_train_vect = vectorizer.fit_transform(X_train).toarray()
 X_test_vect = vectorizer.transform(X_test).toarray()
@@ -40,7 +43,8 @@ model.add(Dense(len(np.unique(diagnosis_encoded)), activation='softmax'))
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-model.fit(X_train_vect, y_train, epochs=10, batch_size=32, validation_data=(X_test_vect, y_test))
+with st.spinner("Training the model..."):
+    model.fit(X_train_vect, y_train, epochs=10, batch_size=32, validation_data=(X_test_vect, y_test))
 
 # Streamlit app
 st.title("Healthcare Symptoms Checker")
@@ -61,6 +65,8 @@ if st.button("Check Diagnosis"):
         # Retrieve recommended treatment based on predicted diagnosis
         recommended_treatment = df[df['diagnosis'] == predicted_diagnosis[0]]['treatment'].values[0]
         
+        # Display prediction and treatment
+        st.subheader("Diagnosis Result")
         st.write(f"**Predicted Diagnosis:** {predicted_diagnosis[0]}")
         st.write(f"**Recommended Treatment:** {recommended_treatment}")
     else:
