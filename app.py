@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import CountVectorizer
 
 # Load dataset (you can replace this with your own dataset)
-df = pd.read_csv('healthcare_dataset.csv')  # Replace with your actual file
+df = pd.read_csv('src/Medical_data.csv')  # Replace with your actual file
 
 # Check if the dataset has 'symptoms', 'diagnosis', and 'treatment' columns
 if not all(col in df.columns for col in ['symptoms', 'diagnosis', 'treatment']):
