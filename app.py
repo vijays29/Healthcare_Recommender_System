@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 # Load dataset (you can replace this with your own dataset)
 # Make sure the dataset has columns for 'symptoms', 'diagnosis', and 'treatment'
-df = pd.read_csv('src/Medical data.scv')  # Replace with your actual file
+df = pd.read_csv('src/Medical_data.scv')  # Replace with your actual file
 
 # Preprocess the dataset
 symptoms = df['symptoms']  # Assuming 'symptoms' column contains symptom information
